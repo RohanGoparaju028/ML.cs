@@ -1,0 +1,22 @@
+# ===== OS =====
+.DS_Store
+
+# ===== .NET =====
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.log
+
+# ===== Test results =====
+TestResults/
+coverage/
+*.coverage
+
+# ===== IDE =====
+.vscode/
+.idea/
+
+# ===== NuGet =====
+*.nupkg
