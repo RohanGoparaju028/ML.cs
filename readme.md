@@ -1,13 +1,12 @@
 # ML.cs
-ML.cs is a C# library designed to provide a simple way to create and build machine learning models. This project is not intended to replace Microsoft's ML.NET, but instead provides an alternative for machine learning in .NET
-
-The name is inspired by d3.js, but has no connection with it.
----
+In the world of c# and dotnet we have ML.net framework to implement machine learning models but the problem for me is the style of writing the models feels sufisticated compared to writing same idea in languages like python and scikit-learn. So my main idea is to write a new machine learning library which look and feel simple to use instead of being overwhelming.
+##Example 
+In the world of machine learning one of the simplest algorithm is **`linear regression`** so I will provide a screenshot that I want to do for the library.
+<img width="1435" height="890" alt="Screenshot 2025-12-28 at 12 04 53 PM" src="https://github.com/user-attachments/assets/ee1d5c7c-d9c3-4e61-910e-72abf0a08f31" />
 
 ## Current Status
 
 The library is currently in the preprocessing stage. Implemented functions include:
-
 * **`readCSV`**: Reads CSV files (similar to pandas `read_csv`) and returns a `Dictionary<string, List<string?>>`, where keys are column headers and values are the corresponding data. Supports `null` values.
 * **`getNullSum`**: Returns the number of null values present in each column.
 * **`dropRow`**: Returns a dictionary after dropping rows containing null values.
