@@ -7,10 +7,10 @@ using System.Linq;
 using CsvHelper;
 using CsvHelper.Configuration;
 namespace ML.cs.DataPreprocessing;
-public class MX  {
+public class PreProcessing  {
     // The main goal of this function is to read a csv file since we
     // perform the data preprocessing and applied machine learning process
-    public static IDictionary<string,List<string?>> readCSV(string csv) {
+    public static IDictionary<string,List<string?>> ReadCSV(string csv) {
        if(!File.Exists(csv)) {
            throw new FileNotFoundException("passed csv file does not exit in the current directory please provide the correct address");
        }
@@ -36,7 +36,7 @@ public class MX  {
       return result;
       }
     // The function is used to get the  number of null present in the dictionary
-      public static void getNullSum(IDictionary<string,List<string?>> input) {
+      public static void GetNullSum(IDictionary<string,List<string?>> input) {
           Console.WriteLine("ColumnName:Count");
           foreach(var key in input.Keys) {
               List<string?> values = input[key];
@@ -56,7 +56,4 @@ public class MX  {
          );
     }
     // This function used to drop the entire column that contains null value
-    public static IDictionary<string,List<string>> DropColumn(IDictionary<string,List<string?> input) {
-
-    }
 }

@@ -11,7 +11,7 @@ public class TestCases
     public void Test_readCSV()
     {
         string file = "Test/test.csv";
-        var data = MX.readCSV(file); // or NullHandling.ReadCsv(file)
+        var data = PreProcessing.ReadCSV(file); // or NullHandling.ReadCsv(file)
 
         // Print headers
         foreach (var key in data.Keys)
@@ -38,8 +38,8 @@ public class TestCases
             }
             Console.WriteLine();
         }
-        MX.getNullSum(data);
-        data = MX.DropRow(data);
-        MX.getNullSum(data);
+        PreProcessing.GetNullSum(data);
+        data = PreProcessing.DropRow(data);
+        PreProcessing.GetNullSum(data);
     }
 }
