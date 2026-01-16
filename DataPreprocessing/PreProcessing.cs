@@ -24,6 +24,34 @@ public class PreProcessing  {
     public static DataFrame DropNulls(DataFrame df) {
        return df.DropNulls();
     }
+    public static (DataFrame,DataFrame,PrimitiveDataFrameColumn<double>,PrimitiveDataFrameColumn<double>) TrainTestSplit(DataFrame df,string targetColumn,double testsize=0.8) {
+     int noOfRows = (int)df.Rows.Count;
+     int testDataSetSize = (int) (noOfRows * testsize);
+     int trainDataSetSize = noOfRows - testDataSetSize;
+     var targetFeatureIndex = df.Columns.IndexOf(targetColumn);
+     var x = df.Clone();
+     x.Columns.RemoveAt(targetFeatureIndex);
+     var originalTarget = df.Columns[targetColumn];
+     PrimitiveDataFrameColumn<double> y = new PrimitiveDataFrameColumn<double>(targetColumn, noOfRows);
+
+    for (long i = 0; i < noOfRows; i++)
+    {
+        y[i] = Convert.ToDouble(originalTarget[i]);
+    }
+     var trainIndicies = Enumerable.Range(0,trainDataSetSize).Select(i => (long)i);
+     var testIndicies = Enumerable.Range(trainDataSetSize,testDataSetSize).Select(i => (long)i);
+     DataFrame X_Train = x[trainIndicies];
+     DataFrame X_Test = x[testIndicies];
+     PrimitiveDataFrameColumn<double> y_train = new PrimitiveDataFrameColumn<double>(targetColumn,trainDataSetSize);
+     for(int i=0;i<trainDataSetSize;i++) {
+         y_train[i] = y[i];
+     }
+     PrimitiveDataFrameColumn<double> y_test = new PrimitiveDataFrameColumn<double>(targetColumn,testDataSetSize);
+     for(int i=0;i<testDataSetSize;i++) {
+         y_test[i] = y[i];
+     }
+     return (X_Train,X_Test,y_train,y_test);
+    }
     public static void FillNa(DataFrame df) {
         foreach(var column in df.Columns) {
             if(column is PrimitiveDataFrameColumn<double> col) {
