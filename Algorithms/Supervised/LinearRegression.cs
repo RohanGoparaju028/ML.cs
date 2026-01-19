@@ -2,9 +2,9 @@ using Microsoft.Data.Analysis;
 namespace ML.cs.Algorithms.Supervised.LinearRegression;
 public class LinearRegression {
     private  double learningrate;
-    private   int iterations;
-    private   double tolerance;
-    private  double[] wts;
+    private  int iterations;
+    private  double tolerance;
+    private double[] wts;
     private  double bias;
     public LinearRegression() {
         this.learningrate = 0.01;
@@ -12,9 +12,9 @@ public class LinearRegression {
         this.tolerance = 1e-6;
     }
     public LinearRegression(int iterations,double learningrate,double tolerance) {
-        learningrate = learningrate;
-        iterations = iterations;
-        tolerance = tolerance;
+        this.learningrate = learningrate;
+        this.iterations = iterations;
+        this.tolerance = tolerance;
     }
      private  double MSE(DataFrame x,PrimitiveDataFrameColumn<double> y) {
          int n = (int)x.Rows.Count;
@@ -22,7 +22,7 @@ public class LinearRegression {
          for(int i=0;i<n;i++) {
              double yPred = bias;
              for(int j=0;j<x.Columns.Count;j++) {
-                 yPred = wts[j] * Convert.ToDouble(x.Columns[j][i]);
+                 yPred += wts[j] * Convert.ToDouble(x.Columns[j][i]);
              }
              double error = yPred - y[i]!.Value;
              loss += error*error;
@@ -32,6 +32,14 @@ public class LinearRegression {
       public void Fit(DataFrame x,PrimitiveDataFrameColumn<double> y) {
         if(x.Rows.Count != y.Length) {
             throw new ArgumentException("Dependent and independent features are of different lengths please fix the problem");
+        }
+        foreach(var col in x.Columns) {
+            if(col.NullCount > 0) {
+                throw new ArgumentException("Independent variable contains null values");
+            }
+        }
+        if(y.NullCount > 0) {
+            throw new Exception("Dependent variable contains null");
         }
         int numberOfSamples = (int)x.Rows.Count;
         int numberOfFeatures  = (int)x.Columns.Count;
@@ -51,6 +59,7 @@ public class LinearRegression {
                    dw[j] += error*Convert.ToDouble(x.Columns[j][i]);
                }
                dc += error;
+               }
                for(int j=0;j<numberOfFeatures;j++) {
                    wts[j] -= learningrate*dw[j]/numberOfSamples;
                }
@@ -59,7 +68,7 @@ public class LinearRegression {
                if(Math.Abs(prevloss - loss) < tolerance) {
                    break;
                }
-          }
+               prevloss = loss;
         }
     }
    public PrimitiveDataFrameColumn<double>  Predict(DataFrame x) {
@@ -70,6 +79,11 @@ public class LinearRegression {
        int numberOfPredictions = (int)x.Columns.Count;
        if(numberOfPredictions != wts.Length) {
            throw new ArgumentException("The trained model and predicted model contains different featrure length");
+       }
+       foreach(var col in x.Columns) {
+           if(col.NullCount > 0) {
+               throw new Exception("Contains null values");
+           }
        }
        PrimitiveDataFrameColumn<double> pred = new("Predictios",numberOfSample);
        for(int i=0;i<numberOfSample;i++) {

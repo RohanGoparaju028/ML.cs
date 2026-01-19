@@ -1,19 +1,19 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Globalization;
 using Microsoft.Data.Analysis;
 namespace ML.cs.DataPreprocessing;
 public class PreProcessing  {
     // The main goal of this function is to read a csv file since we
     // perform the data preprocessing and applied machine learning process
-    public static DataFrame ReadCSV(string csv) {
-          if(!File.Exists(csv)) {
-              throw new Exception("File Does not exists");
-          }
-          return DataFrame.LoadCsv(csv);
+    public  DataFrame ReadCSV(string csv) {
+     if (!File.Exists(csv))
+        throw new FileNotFoundException($"CSV file does not exist: {csv}");
+       return DataFrame.LoadCsv(csv,header:true,dataTypes:default);
     }
     // The function is used to get the  number of null present in the Dataframe
-      public static void GetNullSum(DataFrame df) {
+      public void GetNullSum(DataFrame df) {
           Console.WriteLine("ColumnName:Count");
           foreach(var col in df.Columns) {
               long nullcount = col.NullCount;
@@ -21,22 +21,25 @@ public class PreProcessing  {
            }
       }
     //  Dropping the rows containg the null values
-    public static DataFrame DropNulls(DataFrame df) {
+    public  DataFrame DropNulls(DataFrame df) {
        return df.DropNulls();
     }
-    public static (DataFrame,DataFrame,PrimitiveDataFrameColumn<double>,PrimitiveDataFrameColumn<double>) TrainTestSplit(DataFrame df,string targetColumn,double testsize=0.8) {
+    public DataFrame DropColumn(DataFrame df,string col) {
+        DataFrame newDf = df.Clone();
+        newDf.Remove(col);
+        return newDf;
+    }
+    public (DataFrame,DataFrame,PrimitiveDataFrameColumn<double>,PrimitiveDataFrameColumn<double>) TrainTestSplit(DataFrame df,PrimitiveDataFrameColumn<double> y,double testsize=0.8) {
      int noOfRows = (int)df.Rows.Count;
      int testDataSetSize = (int) (noOfRows * testsize);
      int trainDataSetSize = noOfRows - testDataSetSize;
-     var targetFeatureIndex = df.Columns.IndexOf(targetColumn);
      var x = df.Clone();
-     x.Columns.RemoveAt(targetFeatureIndex);
-     var originalTarget = df.Columns[targetColumn];
-     PrimitiveDataFrameColumn<double> y = new PrimitiveDataFrameColumn<double>(targetColumn, noOfRows);
+     var targetColumn = y.Name;
+     PrimitiveDataFrameColumn<double> newY = new PrimitiveDataFrameColumn<double>(targetColumn,noOfRows);
 
     for (long i = 0; i < noOfRows; i++)
     {
-        y[i] = Convert.ToDouble(originalTarget[i]);
+        newY[i] = y[i];
     }
      var trainIndicies = Enumerable.Range(0,trainDataSetSize).Select(i => (long)i);
      var testIndicies = Enumerable.Range(trainDataSetSize,testDataSetSize).Select(i => (long)i);
@@ -44,15 +47,15 @@ public class PreProcessing  {
      DataFrame X_Test = x[testIndicies];
      PrimitiveDataFrameColumn<double> y_train = new PrimitiveDataFrameColumn<double>(targetColumn,trainDataSetSize);
      for(int i=0;i<trainDataSetSize;i++) {
-         y_train[i] = y[i];
+         y_train[i] = newY[i];
      }
      PrimitiveDataFrameColumn<double> y_test = new PrimitiveDataFrameColumn<double>(targetColumn,testDataSetSize);
      for(int i=0;i<testDataSetSize;i++) {
-         y_test[i] = y[i];
+         y_test[i] = newYy[i];
      }
      return (X_Train,X_Test,y_train,y_test);
     }
-    public static void FillNa(DataFrame df) {
+    public  void FillNa(DataFrame df) {
         foreach(var column in df.Columns) {
             if(column is PrimitiveDataFrameColumn<double> col) {
                var mean = col.Mean();
