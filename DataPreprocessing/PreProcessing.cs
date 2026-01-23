@@ -26,34 +26,30 @@ public class PreProcessing  {
     }
     public DataFrame DropColumn(DataFrame df,string col) {
         DataFrame newDf = df.Clone();
-        newDf.Remove(col);
+        newDf.Columns.Remove(col);
         return newDf;
     }
-    public (DataFrame,DataFrame,PrimitiveDataFrameColumn<double>,PrimitiveDataFrameColumn<double>) TrainTestSplit(DataFrame df,PrimitiveDataFrameColumn<double> y,double testsize=0.8) {
-     int noOfRows = (int)df.Rows.Count;
-     int testDataSetSize = (int) (noOfRows * testsize);
-     int trainDataSetSize = noOfRows - testDataSetSize;
-     var x = df.Clone();
-     var targetColumn = y.Name;
-     PrimitiveDataFrameColumn<double> newY = new PrimitiveDataFrameColumn<double>(targetColumn,noOfRows);
-
-    for (long i = 0; i < noOfRows; i++)
-    {
-        newY[i] = y[i];
-    }
-     var trainIndicies = Enumerable.Range(0,trainDataSetSize).Select(i => (long)i);
-     var testIndicies = Enumerable.Range(trainDataSetSize,testDataSetSize).Select(i => (long)i);
-     DataFrame X_Train = x[trainIndicies];
-     DataFrame X_Test = x[testIndicies];
-     PrimitiveDataFrameColumn<double> y_train = new PrimitiveDataFrameColumn<double>(targetColumn,trainDataSetSize);
-     for(int i=0;i<trainDataSetSize;i++) {
-         y_train[i] = newY[i];
-     }
-     PrimitiveDataFrameColumn<double> y_test = new PrimitiveDataFrameColumn<double>(targetColumn,testDataSetSize);
-     for(int i=0;i<testDataSetSize;i++) {
-         y_test[i] = newYy[i];
-     }
-     return (X_Train,X_Test,y_train,y_test);
+    public (DataFrame,DataFrame,PrimitiveDataFrameColumn<double>,PrimitiveDataFrameColumn<double>) TrainTestSplit(DataFrame X,PrimitiveDataFrameColumn<double> y,double testSize=0.8) {
+        int n = (int) X.Rows.Count;
+        Random rand = new();
+        var indices = Enumerable.Range(0,n).OrderBy(x => rand.Next()).ToList();
+        int testCount = (int) (n * testSize);
+        int trainCount = n - testCount;
+        var trainIndicies = indices.Take(trainCount).Select(i => (long)i);
+        var testIndicies = indices.Skip(trainCount).Select(i => (long)i);
+        DataFrame X_Train = X[trainIndicies];
+        DataFrame X_Test = X[testIndicies];
+        PrimitiveDataFrameColumn<double> y_train = new(y.Name,trainCount);
+        PrimitiveDataFrameColumn<double> y_test = new(y.Name,testCount);
+        var trainIdx = 0;
+        var testIdx = 0;
+        foreach(long i in trainIndicies) {
+            y_train[trainIdx++] = y[i];
+        }
+        foreach(long i in testIndicies) {
+            y_test[testIdx++] = y[i];
+        }
+        return (X_Train,X_Test,y_train,y_test);
     }
     public  void FillNa(DataFrame df) {
         foreach(var column in df.Columns) {

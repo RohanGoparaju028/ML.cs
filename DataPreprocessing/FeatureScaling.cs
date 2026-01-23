@@ -1,23 +1,35 @@
 using System;
 using System.Linq;
 using Microsoft.Data.Analysis;
-namespace ML.cs.DataPreprocessing.FeatureScaling;
-public class FeatureScaling {
-    private double Diviation(PrimitiveDataFrameColumn<double> x,double mean){
-        int n = x.Rows.Count;
-        double std = 0.0;
-        foreach(var datapoint in x) {
-            std += Math.Pow(datapoint - mean,2);
+namespace ML.cs.DataPreprocessing.Normalization;
+public class ZScore {
+    private double Mean;
+    private double Std;
+    public PrimitiveDataFrameColumn<double> Normalize(PrimitiveDataFrameColumn<double> x)  {
+        Mean = x.ToList().Average() ?? 0.0;
+        Std = StandardDeviation(x,Mean);
+        for(long i=0;i<x.Length;i++) {
+            x[i] = (x[i].Value - Mean) / Std;
         }
-        return Math.Sqrt(std/n);
+        return x;
     }
-    public PrimitiveDataFrameColumn<double> ZScore(PrimitiveDataFrameColumn<double> x) {
-        var mean = x.Average();
-        var std = Diviation(x,mean);
-        PrimitiveDataFrameColumn<double> z = new PrimitiveDataFrameColumn<double>();
-        foreach(var col in x) {
-            z[col] = (col.Value - mean) / std;
+    private double StandardDeviation(PrimitiveDataFrameColumn<double> x,double mean) {
+        var std = x.Select(item => Math.Pow(item.Value - mean,2)).Sum();
+        return Math.Sqrt((double)std/x.Length);
+    }
+    }
+public class MinMax {
+    private double min;
+    private double max;
+    public PrimitiveDataFrameColumn<double> Normalize(PrimitiveDataFrameColumn<double> x) {
+        double min = (double)x.Min();
+        double max =  (double)x.Max();
+        if(min == max) {
+            throw new Exception("Min and Maximum element cannot be of same value there is a problem with this please fix this issue");
         }
-        return z;
+        for(long i=0;i<x.Length;i++) {
+            x[i] = (x[i] - min) / (max - min);
+        }
+        return x;
     }
 }

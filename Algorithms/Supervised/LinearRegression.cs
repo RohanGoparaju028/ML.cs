@@ -7,7 +7,7 @@ public class LinearRegression {
     private double[] wts;
     private  double bias;
     public LinearRegression() {
-        this.learningrate = 0.01;
+        this.learningrate = 0.0001;
         this.iterations = 1000;
         this.tolerance = 1e-6;
     }
