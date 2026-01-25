@@ -4,12 +4,14 @@ public class LinearRegression {
     private  double learningrate;
     private  int iterations;
     private  double tolerance;
+    private double lambda;
     private double[] wts;
     private  double bias;
-    public LinearRegression(int iterations,double learningrate,double tolerance) {
+    public LinearRegression(int iterations,double learningrate,double tolerance,double lambda) {
         this.learningrate = learningrate;
         this.iterations = iterations;
         this.tolerance = tolerance;
+        this.lambda = lambda;
     }
      private  double MSE(DataFrame x,PrimitiveDataFrameColumn<double> y) {
          int n = (int)x.Rows.Count;
@@ -51,7 +53,7 @@ public class LinearRegression {
                }
                double error = yPred - y[i]!.Value;
                for(int j=0;j<numberOfFeatures;j++) {
-                   dw[j] += error*Convert.ToDouble(x.Columns[j][i]);
+                   dw[j] += error*Convert.ToDouble(x.Columns[j][i]) + (lambda * wts[j]);
                }
                dc += error;
                }
@@ -59,7 +61,8 @@ public class LinearRegression {
                    wts[j] -= learningrate*dw[j]/numberOfSamples;
                }
                bias -= learningrate*dc/numberOfSamples;
-               double loss  = MSE(x,y);
+               double regTerm = lambda * wts.Sum(w => w*w);
+               double loss  = MSE(x,y) + regTerm;
                if(Math.Abs(prevloss - loss) < tolerance) {
                    break;
                }
