@@ -11,4 +11,5 @@ public class KMeans {
     public void Fit() {
 
     }
+    //private double Eucliddde;
 }

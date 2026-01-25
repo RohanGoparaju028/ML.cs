@@ -4,7 +4,7 @@ using System.Linq;
 using System.Globalization;
 using Microsoft.Data.Analysis;
 namespace ML.cs.DataPreprocessing;
-public class PreProcessing  {
+public class Preprocessing  {
     // The main goal of this function is to read a csv file since we
     // perform the data preprocessing and applied machine learning process
     public  DataFrame ReadCSV(string csv) {
@@ -24,9 +24,13 @@ public class PreProcessing  {
     public  DataFrame DropNulls(DataFrame df) {
        return df.DropNulls();
     }
-    public DataFrame DropColumn(DataFrame df,string col) {
-        DataFrame newDf = df.Clone();
-        newDf.Columns.Remove(col);
+    public DataFrame DropColumn(DataFrame df,string[] col) {
+        DataFrame newDf = new DataFrame();
+        foreach(var column in df.Columns) {
+            if(!col.Contains(column.Name)) {
+                newDf.Columns.Add(column.Clone());
+            }
+        }
         return newDf;
     }
     public (DataFrame,DataFrame,PrimitiveDataFrameColumn<double>,PrimitiveDataFrameColumn<double>) TrainTestSplit(DataFrame X,PrimitiveDataFrameColumn<double> y,double testSize=0.8) {
