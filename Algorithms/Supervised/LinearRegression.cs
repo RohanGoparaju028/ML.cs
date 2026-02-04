@@ -1,19 +1,19 @@
 using Microsoft.Data.Analysis;
 namespace ML.cs.Algorithms.Supervised.LinearRegression;
 public class LinearRegression {
-    private  double learningrate;
-    private  int iterations;
-    private  double tolerance;
-    private double lambda;
-    private double[] wts;
-    private  double bias;
+    internal  double learningrate;
+    internal  int iterations;
+    internal  double tolerance;
+    internal double lambda;
+    internal double[] wts;
+    internal  double bias;
     public LinearRegression(int iterations,double learningrate,double tolerance,double lambda) {
         this.learningrate = learningrate;
         this.iterations = iterations;
         this.tolerance = tolerance;
         this.lambda = lambda;
     }
-     private  double MSE(DataFrame x,PrimitiveDataFrameColumn<double> y) {
+     internal  double MSE(DataFrame x,PrimitiveDataFrameColumn<double> y) {
          int n = (int)x.Rows.Count;
          double loss = 0.0;
          for(int i=0;i<n;i++) {

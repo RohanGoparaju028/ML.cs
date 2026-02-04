@@ -33,7 +33,8 @@ public class Preprocessing  {
         }
         return newDf;
     }
-    public (DataFrame,DataFrame,PrimitiveDataFrameColumn<double>,PrimitiveDataFrameColumn<double>) TrainTestSplit(DataFrame X,PrimitiveDataFrameColumn<double> y,double testSize=0.8) {
+    public (DataFrame,DataFrame,PrimitiveDataFrameColumn<double>,PrimitiveDataFrameColumn<double>) TrainTestSplit(DataFrame X,PrimitiveDataFrameColumn<double> y,double testSize=0.2) {
+
         int n = (int) X.Rows.Count;
         Random rand = new();
         var indices = Enumerable.Range(0,n).OrderBy(x => rand.Next()).ToList();
