@@ -7,7 +7,7 @@ namespace ML.cs.DataPreprocessing;
 public class Preprocessing  {
     // The main goal of this function is to read a csv file since we
     // perform the data preprocessing and applied machine learning process
-    public  DataFrame ReadCSV(string csv) {
+    public  DataFrame ReadCsv(string csv) {
      if (!File.Exists(csv))
         throw new FileNotFoundException($"CSV file does not exist: {csv}");
        return DataFrame.LoadCsv(csv,header:true,dataTypes:default);
@@ -24,7 +24,7 @@ public class Preprocessing  {
     public  DataFrame DropNulls(DataFrame df) {
        return df.DropNulls();
     }
-    public DataFrame DropColumn(DataFrame df,string[] col) {
+    public DataFrame DropColumns(DataFrame df,string[] col) {
         DataFrame newDf = new DataFrame();
         foreach(var column in df.Columns) {
             if(!col.Contains(column.Name)) {
