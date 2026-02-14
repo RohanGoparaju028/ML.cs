@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using Microsoft.Data.Analysis;
-namespace ML.cs.ModelEvaluation.R2;
+namespace ML.cs.ModelEvaluation;
 public class R2 {
     public  double R2_Score(PrimitiveDataFrameColumn<double> y_test,PrimitiveDataFrameColumn<double> y_pred) {
         var y_mean = y_test.Average()!.Value;
