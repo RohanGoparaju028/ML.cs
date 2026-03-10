@@ -56,12 +56,21 @@ public class Preprocessing  {
         }
         return (X_Train,X_Test,y_train,y_test);
     }
-    public  void FillNa(DataFrame df) {
-        foreach(var column in df.Columns) {
-            if(column is PrimitiveDataFrameColumn<double> col) {
-               var mean = col.Mean();
-               col.FillNulls(mean,inPlace:true);
-            }
+    public void FillNa(DataFrame df) 
+    {
+    foreach (var column in df.Columns) 
+    {
+        
+        if (column is DoubleDataFrameColumn doubleCol) 
+        {
+            double mean = (double)doubleCol.Mean();
+            doubleCol.FillNulls(mean, inPlace: true);
+        }
+        else if (column is SingleDataFrameColumn floatCol) 
+        {
+            float mean = (float)floatCol.Mean();
+            floatCol.FillNulls(mean, inPlace: true);
         }
     }
+}
 }
