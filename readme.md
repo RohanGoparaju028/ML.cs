@@ -1,6 +1,6 @@
 # ML.cs
 
-A lightweight machine learning library written in **C#**, built from scratch to help .NET developers understand how ML algorithms work under the hood. Inspired by the simplicity of [d3.js](https://d3js.org/), ML.cs aims to be an accessible starting point for .NET devs who want to bring machine learning into their applications without leaving the C# ecosystem.
+A lightweight machine learning library written in **C#**, built from scratch to help .NET developers understand how ML algorithms work under the hood. ML.cs aims to be an accessible starting point for .NET devs who want to bring machine learning into their applications without leaving the C# ecosystem.
 
 > ⚠️ **Pre-release:** ML.cs has not yet reached v1. The API may change between versions. Contributions and feedback are welcome.
 
@@ -44,17 +44,7 @@ While C# has powerful ML tooling (ML.NET, TensorFlow.NET, etc.), they can be com
 
 ## Installation
 
-Clone the repository and add it as a reference to your project:
-
-```bash
-git clone https://github.com/your-username/ML.cs.git
-```
-
-Then reference the project in your `.csproj`:
-
-```xml
-<ProjectReference Include="../ML.cs/ML.cs.csproj" />
-```
+Use `dotnet add package ML.cs` from nuget package manager
 
 ---
 
