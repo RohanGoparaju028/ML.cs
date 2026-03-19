@@ -1,13 +1,13 @@
-using Microsoft.Data.Analysis;
 using System;
+using Microsoft.Data.Analysis;
 
 namespace ML.cs.Algorithms.Unsupervised.KMeans;
 
 public class KMeans
 {
-    private int _k; 
-    private double[][] _centroids; 
-    private int _maxIterations; 
+    private int _k;
+    private double[][] _centroids;
+    private int _maxIterations;
 
     public KMeans(int k, int maxIterations = 1000)
     {
@@ -20,10 +20,10 @@ public class KMeans
         int n = X.Length;
         double[][] cluster = new double[_k][];
         Random rand = new Random();
-        
+
         int firstIndex = rand.Next(n);
         cluster[0] = (double[])X[firstIndex].Clone();
-        
+
         double[] distance = new double[n];
         for (int c = 1; c < _k; c++)
         {
@@ -34,7 +34,8 @@ public class KMeans
                 for (int j = 0; j < c; j++)
                 {
                     double dist = EuclideanDistance(X[i], cluster[j]);
-                    if (dist < minDist) minDist = dist;
+                    if (dist < minDist)
+                        minDist = dist;
                 }
                 distance[i] = minDist * minDist;
                 totalDistance += distance[i];
@@ -47,7 +48,7 @@ public class KMeans
                 cumulative += distance[i];
                 if (cumulative >= r)
                 {
-                    cluster[c] = (double[])X[i].Clone(); 
+                    cluster[c] = (double[])X[i].Clone();
                     break;
                 }
             }
@@ -78,7 +79,7 @@ public class KMeans
 
     private double EuclideanDistance(double[] x, double[] cluster)
     {
-        int length = x.Length; 
+        int length = x.Length;
         double sum = 0;
         for (int i = 0; i < length; i++)
         {
@@ -90,7 +91,7 @@ public class KMeans
     private double[][] ConvertDataFrameToDoubleArray(DataFrame X)
     {
         int rows = (int)X.Rows.Count;
-        int cols = (int)X.Columns.Count; 
+        int cols = (int)X.Columns.Count;
         double[][] data = new double[rows][];
         for (int i = 0; i < rows; i++)
         {
@@ -109,7 +110,8 @@ public class KMeans
         double[][] newCentroids = new double[_k][];
         int[] counts = new int[_k];
 
-        for (int i = 0; i < _k; i++) newCentroids[i] = new double[dims];
+        for (int i = 0; i < _k; i++)
+            newCentroids[i] = new double[dims];
 
         for (int i = 0; i < data.Length; i++)
         {
@@ -123,7 +125,8 @@ public class KMeans
 
         for (int i = 0; i < _k; i++)
         {
-            if (counts[i] == 0) continue;
+            if (counts[i] == 0)
+                continue;
             for (int d = 0; d < dims; d++)
             {
                 newCentroids[i][d] /= counts[i];
@@ -136,10 +139,12 @@ public class KMeans
     {
         for (int i = 0; i < _k; i++)
         {
-            if (EuclideanDistance(oldC[i], newC[i]) > 1e-6) return false;
+            if (EuclideanDistance(oldC[i], newC[i]) > 1e-6)
+                return false;
         }
         return true;
     }
+
     public double CalculateInertia(DataFrame X)
     {
         double[][] data = ConvertDataFrameToDoubleArray(X);
@@ -150,12 +155,14 @@ public class KMeans
             foreach (var centroid in _centroids)
             {
                 double d = EuclideanDistance(data[i], centroid);
-                if (d < minDist) minDist = d;
+                if (d < minDist)
+                    minDist = d;
             }
-        totalDistance += Math.Pow(minDist, 2);
+            totalDistance += Math.Pow(minDist, 2);
         }
-        return Math.Round(totalDistance,2);
+        return Math.Round(totalDistance, 2);
     }
+
     public void Fit(DataFrame X)
     {
         double[][] data = ConvertDataFrameToDoubleArray(X);
@@ -176,6 +183,6 @@ public class KMeans
     {
         double[][] data = ConvertDataFrameToDoubleArray(X);
         int[] assigncluster = AssignClusters(data);
-        return new Int32DataFrameColumn("Clusters", assigncluster.Select(x => (int)x)); 
+        return new Int32DataFrameColumn("Clusters", assigncluster.Select(x => (int)x));
     }
 }

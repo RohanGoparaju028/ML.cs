@@ -1,17 +1,29 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+
+    <!-- NuGet metadata -->
+    <PackageId>ML.cs</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>RohanGoparaju028</Authors>
+    <Description>A lightweight machine learning library for .NET developers, built from scratch.</Description>
+    <PackageTags>machine-learning;ml;csharp;dotnet;linear-regression;logistic-regression;kmeans</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/RohanGoparaju028/ML.cs</RepositoryUrl>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.Analysis" Version="0.23.0" />
   </ItemGroup>
-    <ItemGroup>
-  <Compile Remove="MLCSTest\**" />
-  <EmbeddedResource Remove="MLCSTest\**" />
-  <None Remove="MLCSTest\**" />
-</ItemGroup>
+
+  <ItemGroup>
+    <None Include="readme.md" Pack="true" PackagePath="\" />
+    <Compile Remove="MLCSTest\**" />
+    <EmbeddedResource Remove="MLCSTest\**" />
+    <None Remove="MLCSTest\**" />
+  </ItemGroup>
 </Project>

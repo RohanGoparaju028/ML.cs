@@ -1,96 +1,129 @@
 using Microsoft.Data.Analysis;
+
 namespace ML.cs.Algorithms.Supervised.LinearRegression;
-public class LinearRegression {
-    internal  double learningrate;
-    internal  int iterations;
-    internal  double tolerance;
+
+public class LinearRegression
+{
+    internal double learningrate;
+    internal int iterations;
+    internal double tolerance;
     internal double lambda;
     internal double[] wts;
-    internal  double bias;
-    public LinearRegression(int iterations,double learningrate,double tolerance,double lambda) {
+    internal double bias;
+
+    public LinearRegression(int iterations, double learningrate, double tolerance, double lambda)
+    {
         this.learningrate = learningrate;
         this.iterations = iterations;
         this.tolerance = tolerance;
         this.lambda = lambda;
     }
-     internal  double MSE(DataFrame x,PrimitiveDataFrameColumn<double> y) {
-         int n = (int)x.Rows.Count;
-         double loss = 0.0;
-         for(int i=0;i<n;i++) {
-             double yPred = bias;
-             for(int j=0;j<x.Columns.Count;j++) {
-                 yPred += wts[j] * Convert.ToDouble(x.Columns[j][i]);
-             }
-             double error = yPred - y[i]!.Value;
-             loss += error*error;
-         }
-         return loss/n;
-     }
-      public void Fit(DataFrame x,PrimitiveDataFrameColumn<double> y) {
-        if(x.Rows.Count != y.Length) {
-            throw new ArgumentException("Dependent and independent features are of different lengths please fix the problem");
+
+    internal double MSE(DataFrame x, PrimitiveDataFrameColumn<double> y)
+    {
+        int n = (int)x.Rows.Count;
+        double loss = 0.0;
+        for (int i = 0; i < n; i++)
+        {
+            double yPred = bias;
+            for (int j = 0; j < x.Columns.Count; j++)
+            {
+                yPred += wts[j] * Convert.ToDouble(x.Columns[j][i]);
+            }
+            double error = yPred - y[i]!.Value;
+            loss += error * error;
         }
-        foreach(var col in x.Columns) {
-            if(col.NullCount > 0) {
+        return loss / n;
+    }
+
+    public void Fit(DataFrame x, PrimitiveDataFrameColumn<double> y)
+    {
+        if (x.Rows.Count != y.Length)
+        {
+            throw new ArgumentException(
+                "Dependent and independent features are of different lengths please fix the problem"
+            );
+        }
+        foreach (var col in x.Columns)
+        {
+            if (col.NullCount > 0)
+            {
                 throw new ArgumentException("Independent variable contains null values");
             }
         }
-        if(y.NullCount > 0) {
+        if (y.NullCount > 0)
+        {
             throw new Exception("Dependent variable contains null");
         }
         int numberOfSamples = (int)x.Rows.Count;
-        int numberOfFeatures  = (int)x.Columns.Count;
+        int numberOfFeatures = (int)x.Columns.Count;
         wts = new double[numberOfFeatures];
         bias = 0.0;
         double prevloss = double.MaxValue;
-        for(int iter = 0;iter < iterations;iter++) {
+        for (int iter = 0; iter < iterations; iter++)
+        {
             var dw = new double[numberOfFeatures];
             var dc = 0.0d;
-            for(int i=0;i<numberOfSamples;i++) {
-               var yPred = bias;
-               for(int j=0;j<numberOfFeatures;j++) {
-                   yPred += wts[j] * Convert.ToDouble(x.Columns[j][i]);
-               }
-               double error = yPred - y[i]!.Value;
-               for(int j=0;j<numberOfFeatures;j++) {
-                   dw[j] += error*Convert.ToDouble(x.Columns[j][i]) + (lambda * wts[j]);
-               }
-               dc += error;
-               }
-               for(int j=0;j<numberOfFeatures;j++) {
-                   wts[j] -= learningrate*dw[j]/numberOfSamples;
-               }
-               bias -= learningrate*dc/numberOfSamples;
-               double regTerm = lambda * wts.Sum(w => w*w);
-               double loss  = MSE(x,y) + regTerm;
-               if(Math.Abs(prevloss - loss) < tolerance) {
-                   break;
-               }
-               prevloss = loss;
+            for (int i = 0; i < numberOfSamples; i++)
+            {
+                var yPred = bias;
+                for (int j = 0; j < numberOfFeatures; j++)
+                {
+                    yPred += wts[j] * Convert.ToDouble(x.Columns[j][i]);
+                }
+                double error = yPred - y[i]!.Value;
+                for (int j = 0; j < numberOfFeatures; j++)
+                {
+                    dw[j] += error * Convert.ToDouble(x.Columns[j][i]) + (lambda * wts[j]);
+                }
+                dc += error;
+            }
+            for (int j = 0; j < numberOfFeatures; j++)
+            {
+                wts[j] -= learningrate * dw[j] / numberOfSamples;
+            }
+            bias -= learningrate * dc / numberOfSamples;
+            double regTerm = lambda * wts.Sum(w => w * w);
+            double loss = MSE(x, y) + regTerm;
+            if (Math.Abs(prevloss - loss) < tolerance)
+            {
+                break;
+            }
+            prevloss = loss;
         }
     }
-   public PrimitiveDataFrameColumn<double>  Predict(DataFrame x) {
-       if(wts == null) {
-        throw new Exception("The model is not fitted yet plese fit and try again");
-       }
-       int numberOfSample = (int)x.Rows.Count;
-       int numberOfPredictions = (int)x.Columns.Count;
-       if(numberOfPredictions != wts.Length) {
-           throw new ArgumentException("The trained model and predicted model contains different featrure length");
-       }
-       foreach(var col in x.Columns) {
-           if(col.NullCount > 0) {
-               throw new Exception("Contains null values");
-           }
-       }
-       PrimitiveDataFrameColumn<double> pred = new("Predictios",numberOfSample);
-       for(int i=0;i<numberOfSample;i++) {
-           double yPred = bias;
-           for(int j=0;j<numberOfPredictions;j++) {
-               yPred += wts[j] * Convert.ToDouble(x.Columns[j][i]);
-           }
-           pred[i] = yPred;
-       }
-       return pred;
-   }
+
+    public PrimitiveDataFrameColumn<double> Predict(DataFrame x)
+    {
+        if (wts == null)
+        {
+            throw new Exception("The model is not fitted yet plese fit and try again");
+        }
+        int numberOfSample = (int)x.Rows.Count;
+        int numberOfPredictions = (int)x.Columns.Count;
+        if (numberOfPredictions != wts.Length)
+        {
+            throw new ArgumentException(
+                "The trained model and predicted model contains different featrure length"
+            );
+        }
+        foreach (var col in x.Columns)
+        {
+            if (col.NullCount > 0)
+            {
+                throw new Exception("Contains null values");
+            }
+        }
+        PrimitiveDataFrameColumn<double> pred = new("Predictios", numberOfSample);
+        for (int i = 0; i < numberOfSample; i++)
+        {
+            double yPred = bias;
+            for (int j = 0; j < numberOfPredictions; j++)
+            {
+                yPred += wts[j] * Convert.ToDouble(x.Columns[j][i]);
+            }
+            pred[i] = yPred;
+        }
+        return pred;
+    }
 }

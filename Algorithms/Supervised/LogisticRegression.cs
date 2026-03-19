@@ -17,7 +17,8 @@ public class LogisticRegression
         string solver = "binomial",
         int max_iteration = 10000,
         double tolerance = 1e-6,
-        double learning_rate = 0.001)
+        double learning_rate = 0.001
+    )
     {
         this.solver = solver;
         this.max_iterations = max_iteration;
@@ -25,8 +26,7 @@ public class LogisticRegression
         this.learning_rate = learning_rate;
     }
 
-    internal double Sigmoid(double z)
-        => 1.0 / (1.0 + Math.Exp(-z));
+    internal double Sigmoid(double z) => 1.0 / (1.0 + Math.Exp(-z));
 
     internal double LogLoss(DataFrame X, PrimitiveDataFrameColumn<double> y)
     {
@@ -45,8 +45,7 @@ public class LogisticRegression
             p = Math.Clamp(p, epsilon, 1 - epsilon);
 
             double actual = y[i]!.Value;
-            total_loss += -(actual * Math.Log(p) +
-                            (1 - actual) * Math.Log(1 - p));
+            total_loss += -(actual * Math.Log(p) + (1 - actual) * Math.Log(1 - p));
         }
 
         return total_loss / n;
